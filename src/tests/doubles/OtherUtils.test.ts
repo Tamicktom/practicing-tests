@@ -1,10 +1,38 @@
 import {
   calculateComplexity,
   toUpperCaseWithCallBack,
+  OtherStringUtils
+
 } from "../../app/doubles/OtherUtils";
 import type { StringInfo } from "../../app/Utils";
 
 describe("OtherUtils test suite", () => {
+
+  describe("Other string utils test spies", () => {
+    let sut: OtherStringUtils;
+
+    beforeEach(() => {
+      sut = new OtherStringUtils();
+    });
+
+    test("Use a spy to track calls",()=>{
+      const toUpperCaseSpy = jest.spyOn(sut, "toUpperCase");
+      sut.toUpperCase("banana");
+      expect(toUpperCaseSpy).toBeCalledWith("banana");
+    });
+
+    test("Use a spy to track calls to other module",()=>{
+      const logSpy = jest.spyOn(console, "log");
+      sut.log("banana");
+      expect(logSpy).toBeCalledWith("banana");
+    })
+
+    test("Use a spy to replace a implementation of a method",()=>{
+      jest.spyOn(sut, "callExternalService").mockImplementation(()=>console.log("Mocked call"));
+      sut.callExternalService();
+    });
+  });
+
   describe("Tracking callbacks with jest mock", () => {
     const callback = jest.fn();
 
@@ -54,12 +82,12 @@ describe("OtherUtils test suite", () => {
   });
 
   it("To uppercase should call callback for inválid argument", () => {
-    const actual = toUpperCaseWithCallBack("", (message) => {});
+    const actual = toUpperCaseWithCallBack("", (message) => { });
     expect(actual).toBeUndefined();
   });
 
   it("To uppercase should return uppercase string", () => {
-    const actual = toUpperCaseWithCallBack("banana", (message) => {});
+    const actual = toUpperCaseWithCallBack("banana", (message) => { });
     expect(actual).toBe("BANANA");
   });
 
